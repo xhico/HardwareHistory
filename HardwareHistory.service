@@ -1,0 +1,12 @@
+[Unit]
+Description=HardwareHistory Service
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/HardwareHistory/
+ExecStart=/usr/bin/python3 /home/pi/HardwareHistory/HardwareHistory.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

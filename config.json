@@ -1,0 +1,42 @@
+{
+  "MAX_CPU_TEMP_C": 60,
+  "MAX_TEMP_C": 30,
+  "MAX_HUMIDITY": 90,
+  "METRICS": [
+    {
+      "CPU": [
+        "Percentage",
+        "PIDs",
+        "Temperature"
+      ]
+    },
+    {
+      "Memory": [
+        "Percentage",
+        "Used",
+        "Available"
+      ]
+    },
+    {
+      "Network": [
+        {
+          "Wifi": [
+            "Received",
+            "Sent"
+          ],
+          "Wired": [
+            "Received",
+            "Sent"
+          ]
+        }
+      ]
+    },
+    {
+      "AmbientHumidityTemperature": [
+        "Humidity",
+        "TemperatureC"
+      ]
+    }
+  ],
+  "SAVED_INFO": []
+}
