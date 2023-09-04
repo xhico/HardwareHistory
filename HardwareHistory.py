@@ -10,6 +10,7 @@ import json
 from Misc import get911, sendErrorEmail
 import yagmail
 import requests
+import copy
 
 import urllib3
 
@@ -28,17 +29,20 @@ def getJSONInfo(JSONInfo):
     """
     JSONInfo_ = {"Date": datetime.datetime.now().strftime("%Y/%m/%d %H:%M")}
 
-    for metric in METRICS:
-        for metric_name, metric_subs in metric.items():
-            JSONInfo_[metric_name] = {}
+    for metric_name, metric_subs in METRICS.items():
+        if JSONInfo[metric_name].get("hasInfo") == "None":
+            continue
 
-            for sub_metric in metric_subs:
-                if isinstance(sub_metric, str):
-                    JSONInfo_[metric_name][sub_metric] = JSONInfo[metric_name][sub_metric]
-                elif isinstance(sub_metric, dict):
-                    for sub_metric_name, sub_metric_values in sub_metric.items():
-                        for value in sub_metric_values:
-                            JSONInfo_[metric_name][sub_metric_name + "_" + value] = JSONInfo[metric_name][sub_metric_name][value]
+        JSONInfo_[metric_name] = {}
+        for sub_metric in metric_subs:
+            if isinstance(sub_metric, str):
+                JSONInfo_[metric_name][sub_metric] = JSONInfo[metric_name][sub_metric]
+            elif isinstance(sub_metric, dict):
+                for sub_metric_name, sub_metric_values in sub_metric.items():
+                    if JSONInfo[metric_name][sub_metric_name].get("hasInfo") == "None":
+                        continue
+                    for value in sub_metric_values:
+                        JSONInfo_[metric_name][sub_metric_name + "_" + value] = JSONInfo[metric_name][sub_metric_name][value]
 
     return JSONInfo_
 
@@ -141,7 +145,7 @@ def fill_missing_keys_recursive(data, expected_structure):
 def main():
     # Get hostname
     hostname = str(socket.gethostname()).upper()
-    global METRICS, SAVED_INFO
+    global METRICS, METRICS_BAK, SAVED_INFO
 
     # Get Hardware Info JSON
     logger.info("Get Hardware Info JSON")
@@ -150,10 +154,6 @@ def main():
         logger.error("Failed to get hardware info JSON. Status code: %d", response.status_code)
         return
     JSONInfo = response.json()
-
-    # Remove AmbientHumidityTemperature
-    if hostname != "RPI4":
-        METRICS = [metric for metric in METRICS if list(metric.keys())[0] != "AmbientHumidityTemperature"]
 
     # Parse JSONInfo
     logger.info("Parse JSONInfo")
@@ -198,7 +198,7 @@ if __name__ == '__main__':
     MAX_TEMP_C = config["MAX_TEMP_C"]
     MAX_HUMIDITY = config["MAX_HUMIDITY"]
     METRICS = config["METRICS"]
-    METRICS_BAK = config["METRICS"]
+    METRICS_BAK = copy.deepcopy(config["METRICS"])
     SAVED_INFO = config["SAVED_INFO"]
 
     yagmail = yagmail.SMTP(EMAIL_USER, EMAIL_APPPW)

@@ -2,41 +2,45 @@
   "MAX_CPU_TEMP_C": 60,
   "MAX_TEMP_C": 30,
   "MAX_HUMIDITY": 90,
-  "METRICS": [
-    {
-      "CPU": [
-        "Percentage",
-        "PIDs",
-        "Temperature"
-      ]
-    },
-    {
-      "Memory": [
-        "Percentage",
-        "Used",
-        "Available"
-      ]
-    },
-    {
-      "Network": [
-        {
-          "Wifi": [
-            "Received",
-            "Sent"
-          ],
-          "Wired": [
-            "Received",
-            "Sent"
-          ]
-        }
-      ]
-    },
-    {
-      "AmbientHumidityTemperature": [
-        "Humidity",
-        "TemperatureC"
-      ]
-    }
-  ],
+  "METRICS": {
+    "CPU": [
+      "Percentage",
+      "PIDs",
+      "Frequency",
+      "Voltage",
+      "Temperature"
+    ],
+    "Memory": [
+      "Percentage",
+      "Used",
+      "Available"
+    ],
+    "Disks": [
+      {
+        "SDCard": [
+          "Percentage"
+        ],
+        "918": [
+          "Percentage"
+        ]
+      }
+    ],
+    "Network": [
+      {
+        "Wifi": [
+          "Received",
+          "Sent"
+        ],
+        "Wired": [
+          "Received",
+          "Sent"
+        ]
+      }
+    ],
+    "AmbientHumidityTemperature": [
+      "Humidity",
+      "TemperatureC"
+    ]
+  },
   "SAVED_INFO": []
 }
