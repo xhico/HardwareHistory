@@ -69,7 +69,7 @@ def checkAlarms(JSONInfo, hostname):
     if "AmbientHumidityTemperature" in JSONInfo.keys():
         humidity = JSONInfo["AmbientHumidityTemperature"]["Humidity"]
         tempc = JSONInfo["AmbientHumidityTemperature"]["TemperatureC"]
-        if humidity > MAX_HUMIDITY or tempc >= MAX_TEMP_C:
+        if humidity > MAX_AMBIENT_HUMIDITY or tempc >= MAX_AMBIENT_TEMP_C:
             logger.warning("FIRE FLOOD")
             logger.warning("Humidity: " + str(humidity) + "%")
             logger.warning("Temperature: " + str(tempc) + "ºC")
@@ -163,12 +163,17 @@ def main():
     logger.info("Check for alarms")
     checkAlarms(JSONInfo, hostname)
 
-    # Set HISTORY_FILE
-    logger.info("Set HISTORY_FILE")
+    # Set Historic Data
+    logger.info("Set Historic Data")
     SAVED_INFO = list(reversed(SAVED_INFO))
     SAVED_INFO.append(JSONInfo)
     SAVED_INFO = fill_missing_keys(SAVED_INFO)
-    config["SAVED_INFO"] = list(reversed(SAVED_INFO))
+    savedInfo["SAVED_INFO"] = list(reversed(SAVED_INFO))
+    with open(savedInfoFile, "w") as outFile:
+        json.dump(savedInfo, outFile, indent=2)
+
+    # Save Config
+    logger.info("Save Config")
     config["METRICS"] = METRICS_BAK
     with open(configFile, "w") as outFile:
         json.dump(config, outFile, indent=2)
@@ -195,12 +200,18 @@ if __name__ == '__main__':
     with open(configFile) as inFile:
         config = json.load(inFile)
     MAX_CPU_TEMP_C = config["MAX_CPU_TEMP_C"]
-    MAX_TEMP_C = config["MAX_TEMP_C"]
-    MAX_HUMIDITY = config["MAX_HUMIDITY"]
+    MAX_AMBIENT_TEMP_C = config["MAX_AMBIENT_TEMP_C"]
+    MAX_AMBIENT_HUMIDITY = config["MAX_AMBIENT_HUMIDITY"]
     METRICS = config["METRICS"]
     METRICS_BAK = copy.deepcopy(config["METRICS"])
-    SAVED_INFO = config["SAVED_INFO"]
 
+    # Load SAVED_INFO from JSON file
+    savedInfoFile = os.path.join(os.path.dirname(os.path.abspath(__file__)), "saved_info.json")
+    with open(savedInfoFile) as inFile:
+        savedInfo = json.load(inFile)
+    SAVED_INFO = savedInfo["SAVED_INFO"]
+
+    # Set Email config
     yagmail = yagmail.SMTP(EMAIL_USER, EMAIL_APPPW)
 
     try:
@@ -209,7 +220,7 @@ if __name__ == '__main__':
     except Exception as ex:
         # Log the error and send an email notification
         logger.error(traceback.format_exc())
-        # sendErrorEmail(os.path.basename(__file__), str(traceback.format_exc()))
+        sendErrorEmail(os.path.basename(__file__), str(traceback.format_exc()))
     finally:
         # Log the end of the script
         logger.info("End")

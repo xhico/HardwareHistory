@@ -1,7 +1,7 @@
 {
   "MAX_CPU_TEMP_C": 60,
-  "MAX_TEMP_C": 30,
-  "MAX_HUMIDITY": 90,
+  "MAX_AMBIENT_TEMP_C": 30,
+  "MAX_AMBIENT_HUMIDITY": 90,
   "METRICS": {
     "CPU": [
       "Percentage",
@@ -41,6 +41,5 @@
       "Humidity",
       "TemperatureC"
     ]
-  },
-  "SAVED_INFO": []
+  }
 }
