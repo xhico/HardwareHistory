@@ -47,50 +47,6 @@ def getJSONInfo(JSONInfo):
     return JSONInfo_
 
 
-def checkNetworkPersistence(JSONInfo, uptime_secs):
-    """
-    Update network statistics in a JSONInfo dictionary based on system uptime.
-
-    This function compares the current network statistics in the `JSONInfo` dictionary
-    with previously saved values. If the system has restarted within the last 60 seconds
-    (determined by `uptime_secs`), it combines the current and saved values. Otherwise,
-    it keeps the current values unchanged. The function updates the `JSONInfo` dictionary
-    in place with the new network statistics.
-
-    Args:
-        JSONInfo (dict): A dictionary containing network statistics, which is updated by
-            this function.
-        uptime_secs (int): The system uptime in seconds.
-
-    Returns:
-        dict: The updated `JSONInfo` dictionary with the network statistics.
-
-    Note:
-        This function assumes that the input `JSONInfo` dictionary has the following
-        structure:
-        {
-            "Network": {
-                "Wifi_Sent": int,
-                "Wifi_Received": int,
-                "Wired_Sent": int,
-                "Wired_Received": int
-            },
-            ...
-        }
-    """
-
-    current_network = JSONInfo["Network"]
-    saved_network = SAVED_INFO[0]["Network"]
-
-    if uptime_secs <= 60:
-        for key in current_network:
-            currentValue = current_network[key]
-            savedValue = saved_network[key]
-            current_network[key] = currentValue + savedValue if currentValue < savedValue else currentValue
-
-    return JSONInfo
-
-
 def checkAlarms(JSONInfo, hostname):
     """
     Check for system alarms based on temperature and environmental conditions.
@@ -200,29 +156,22 @@ def main():
         return
     JSONInfo = response.json()
 
-    # Get Uptime in seconds
-    uptime_secs = JSONInfo["Uptime"]["Uptime_Secs"]
-
     # Parse JSONInfo
     logger.info("Parse JSONInfo")
     JSONInfo = getJSONInfo(JSONInfo)
-
-    # Check Network Persistence
-    logger.info("Check Network Persistence")
-    JSONInfo = checkNetworkPersistence(JSONInfo, uptime_secs)
 
     # Check for alarms
     logger.info("Check for alarms")
     checkAlarms(JSONInfo, hostname)
 
     # Set Historic Data
-    # logger.info("Set Historic Data")
-    # SAVED_INFO = list(reversed(SAVED_INFO))
-    # SAVED_INFO.append(JSONInfo)
-    # SAVED_INFO = fill_missing_keys(SAVED_INFO)
-    # savedInfo = list(reversed(SAVED_INFO))
-    # with open(savedInfoFile, "w") as outFile:
-    #     json.dump(savedInfo, outFile, indent=2)
+    logger.info("Set Historic Data")
+    SAVED_INFO = list(reversed(SAVED_INFO))
+    SAVED_INFO.append(JSONInfo)
+    SAVED_INFO = fill_missing_keys(SAVED_INFO)
+    savedInfo = list(reversed(SAVED_INFO))
+    with open(savedInfoFile, "w") as outFile:
+        json.dump(savedInfo, outFile, indent=2)
 
     return
 
@@ -268,7 +217,7 @@ if __name__ == '__main__':
     except Exception as ex:
         # Log the error and send an email notification
         logger.error(traceback.format_exc())
-        # sendErrorEmail(os.path.basename(__file__), str(traceback.format_exc()))
+        sendErrorEmail(os.path.basename(__file__), str(traceback.format_exc()))
     finally:
         # Log the end of the script
         logger.info("End")
