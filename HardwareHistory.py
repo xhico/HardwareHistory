@@ -7,8 +7,7 @@ import os
 import socket
 import traceback
 import json
-from Misc import get911, sendErrorEmail
-import yagmail
+from Misc import get911, sendEmail
 import requests
 import copy
 
@@ -47,13 +46,12 @@ def getJSONInfo(JSONInfo):
     return JSONInfo_
 
 
-def checkAlarms(JSONInfo, hostname):
+def checkAlarms(JSONInfo):
     """
     Check for system alarms based on temperature and environmental conditions.
 
     Parameters:
     - JSONInfo (dict): A dictionary containing system information, including CPU temperature and ambient data.
-    - hostname (str): The hostname of the system.
 
     Returns:
     None
@@ -64,7 +62,7 @@ def checkAlarms(JSONInfo, hostname):
     if temperature >= MAX_CPU_TEMP_C:
         logger.warning("OVERHEAT")
         logger.warning("Temperature: " + str(temperature) + "ºC")
-        yagmail.send(EMAIL_RECEIVER, hostname + " - OVERHEAT", "Temperature: " + str(temperature) + "ºC")
+        sendEmail("OVERHEAT", "Temperature: " + str(temperature) + "ºC")
 
     # Check Ambient
     if "AmbientHumidityTemperature" in JSONInfo.keys():
@@ -74,7 +72,7 @@ def checkAlarms(JSONInfo, hostname):
             logger.warning("FIRE FLOOD")
             logger.warning("Humidity: " + str(humidity) + "%")
             logger.warning("Temperature: " + str(tempc) + "ºC")
-            yagmail.send(EMAIL_RECEIVER, hostname + " - FIRE FLOOD", "Humidity: " + str(humidity) + "%" + "\n" + "Temperature: " + str(tempc) + "ºC")
+            sendEmail("FIRE FLOOD", "Humidity: " + str(humidity) + "%" + "\n" + "Temperature: " + str(tempc) + "ºC")
 
 
 def generate_expected_structure(data):
@@ -162,7 +160,7 @@ def main():
 
     # Check for alarms
     logger.info("Check for alarms")
-    checkAlarms(JSONInfo, hostname)
+    checkAlarms(JSONInfo)
 
     # Set Historic Data
     logger.info("Set Historic Data")
@@ -208,16 +206,13 @@ if __name__ == '__main__':
     with open(savedInfoFile) as inFile:
         SAVED_INFO = json.load(inFile)
 
-    # Set Email config
-    yagmail = yagmail.SMTP(EMAIL_USER, EMAIL_APPPW)
-
     try:
         # Call the main function
         main()
     except Exception as ex:
         # Log the error and send an email notification
         logger.error(traceback.format_exc())
-        sendErrorEmail(os.path.basename(__file__), str(traceback.format_exc()))
+        sendEmail(os.path.basename(__file__), str(traceback.format_exc()))
     finally:
         # Log the end of the script
         logger.info("End")
