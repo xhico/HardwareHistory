@@ -62,7 +62,7 @@ def checkAlarms(JSONInfo):
     if temperature >= MAX_CPU_TEMP_C:
         logger.warning("OVERHEAT")
         logger.warning("Temperature: " + str(temperature) + "ºC")
-        sendEmail("OVERHEAT", "Temperature: " + str(temperature) + "ºC")
+        sendEmail("OVERHEAT - " + str(temperature), "Temperature: " + str(temperature) + "ºC")
 
     # Check Ambient
     if "AmbientHumidityTemperature" in JSONInfo.keys():
@@ -72,7 +72,7 @@ def checkAlarms(JSONInfo):
             logger.warning("FIRE FLOOD")
             logger.warning("Humidity: " + str(humidity) + "%")
             logger.warning("Temperature: " + str(tempc) + "ºC")
-            sendEmail("FIRE FLOOD", "Humidity: " + str(humidity) + "%" + "\n" + "Temperature: " + str(tempc) + "ºC")
+            sendEmail("FIRE FLOOD - " + str(humidity) + " | " + str(tempc), "Humidity: " + str(humidity) + "%" + "\n" + "Temperature: " + str(tempc) + "ºC")
 
 
 def generate_expected_structure(data):
