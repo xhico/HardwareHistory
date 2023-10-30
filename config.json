@@ -37,9 +37,10 @@
         ]
       }
     ],
-    "AmbientHumidityTemperature": [
+    "Ambient": [
       "Humidity",
-      "TemperatureC"
+      "TemperatureC",
+      "Pressure"
     ]
   }
 }

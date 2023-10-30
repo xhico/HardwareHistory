@@ -65,9 +65,9 @@ def checkAlarms(JSONInfo):
         sendEmail("OVERHEAT - " + str(temperature), "Temperature: " + str(temperature) + "ºC")
 
     # Check Ambient
-    if "AmbientHumidityTemperature" in JSONInfo.keys():
-        humidity = JSONInfo["AmbientHumidityTemperature"]["Humidity"]
-        tempc = JSONInfo["AmbientHumidityTemperature"]["TemperatureC"]
+    if "Ambient" in JSONInfo.keys():
+        humidity = JSONInfo["Ambient"]["Humidity"]
+        tempc = JSONInfo["Ambient"]["TemperatureC"]
         if humidity > MAX_AMBIENT_HUMIDITY or tempc >= MAX_AMBIENT_TEMP_C:
             logger.warning("FIRE FLOOD")
             logger.warning("Humidity: " + str(humidity) + "%")
