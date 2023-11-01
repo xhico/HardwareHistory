@@ -177,9 +177,6 @@ def main():
 if __name__ == '__main__':
     # Define constants
     LOG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.path.abspath(__file__).replace(".py", ".log"))
-    EMAIL_USER = get911('EMAIL_USER')
-    EMAIL_APPPW = get911('EMAIL_APPPW')
-    EMAIL_RECEIVER = get911('EMAIL_RECEIVER')
 
     # Set logging configuration
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", handlers=[logging.FileHandler(LOG_FILE), logging.StreamHandler()])
