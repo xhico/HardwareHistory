@@ -193,14 +193,14 @@ def main():
     logger.info("Check for alarms")
     checkAlarms(JSONInfo)
 
-    # # Set Historic Data
-    # logger.info("Set Historic Data")
-    # SAVED_INFO = list(reversed(SAVED_INFO))
-    # SAVED_INFO.append(JSONInfo)
-    # SAVED_INFO = fill_missing_keys(SAVED_INFO)
-    # savedInfo = list(reversed(SAVED_INFO))
-    # with open(savedInfoFile, "w") as outFile:
-    #     json.dump(savedInfo, outFile, indent=2)
+    # Set Historic Data
+    logger.info("Set Historic Data")
+    SAVED_INFO = list(reversed(SAVED_INFO))
+    SAVED_INFO.append(JSONInfo)
+    SAVED_INFO = fill_missing_keys(SAVED_INFO)
+    savedInfo = list(reversed(SAVED_INFO))
+    with open(savedInfoFile, "w") as outFile:
+        json.dump(savedInfo, outFile, indent=2)
 
     return
 
