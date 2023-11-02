@@ -61,18 +61,49 @@ def checkAlarms(JSONInfo):
     temperature = JSONInfo["CPU"]["Temperature"]
     if temperature >= MAX_CPU_TEMP_C:
         logger.warning("OVERHEAT")
-        logger.warning("Temperature: " + str(temperature) + "ºC")
-        sendEmail("OVERHEAT - " + str(temperature), "Temperature: " + str(temperature) + "ºC")
+        logger.warning("CPU Temperature: " + str(temperature) + "ºC")
+        sendEmail("OVERHEAT", "CPU Temperature: " + str(temperature) + "ºC")
 
     # Check Ambient
     if "Ambient" in JSONInfo.keys():
+        temp_c = JSONInfo["Ambient"]["TemperatureC"]
         humidity = JSONInfo["Ambient"]["Humidity"]
-        tempc = JSONInfo["Ambient"]["TemperatureC"]
-        if humidity > MAX_AMBIENT_HUMIDITY or tempc >= MAX_AMBIENT_TEMP_C:
-            logger.warning("FIRE FLOOD")
-            logger.warning("Humidity: " + str(humidity) + "%")
-            logger.warning("Temperature: " + str(tempc) + "ºC")
-            sendEmail("FIRE FLOOD - " + str(humidity) + " | " + str(tempc), "Humidity: " + str(humidity) + "%" + "\n" + "Temperature: " + str(tempc) + "ºC")
+        pressure = JSONInfo["Ambient"]["Pressure"]
+
+        subject = "AMBIENT WARNING"
+        body = []
+        if temp_c <= TEMP_C_RANGE[0]:
+            msg = "ICE - Ambient Temperature (" + str(temp_c) + "ºC) bellow threshold (" + str(TEMP_C_RANGE[0]) + "ºC)"
+            logger.warning(msg)
+            body.append(msg)
+        if temp_c >= TEMP_C_RANGE[1]:
+            msg = "FIRE - Ambient Temperature (" + str(temp_c) + "ºC) above threshold (" + str(TEMP_C_RANGE[1]) + "ºC)"
+            logger.warning(msg)
+            body.append(msg)
+
+        if humidity <= HUMIDITY_RANGE[0]:
+            msg = "DRY - Ambient Humidity (" + str(humidity) + "%) bellow threshold (" + str(HUMIDITY_RANGE[0]) + "%)"
+            logger.warning(msg)
+            body.append(msg)
+        if humidity >= HUMIDITY_RANGE[1]:
+            msg = "FLOOD - Ambient Humidity (" + str(humidity) + "%) above threshold (" + str(HUMIDITY_RANGE[1]) + "%)"
+            logger.warning(msg)
+            body.append(msg)
+
+        if pressure != "Not Available":
+            if pressure <= PRESSURE_RANGE[0]:
+                msg = "LOW Pressure - (" + str(pressure) + "hPa) bellow threshold (" + str(PRESSURE_RANGE[0]) + "hPa)"
+                logger.warning(msg)
+                body.append(msg)
+            if pressure >= PRESSURE_RANGE[1]:
+                msg = "HIGH Pressure (" + str(pressure) + "hPa) above threshold (" + str(PRESSURE_RANGE[1]) + "hPa)"
+                logger.warning(msg)
+                body.append(msg)
+
+        if len(body) != 0:
+            sendEmail(subject, body)
+
+    return
 
 
 def generate_expected_structure(data):
@@ -162,14 +193,14 @@ def main():
     logger.info("Check for alarms")
     checkAlarms(JSONInfo)
 
-    # Set Historic Data
-    logger.info("Set Historic Data")
-    SAVED_INFO = list(reversed(SAVED_INFO))
-    SAVED_INFO.append(JSONInfo)
-    SAVED_INFO = fill_missing_keys(SAVED_INFO)
-    savedInfo = list(reversed(SAVED_INFO))
-    with open(savedInfoFile, "w") as outFile:
-        json.dump(savedInfo, outFile, indent=2)
+    # # Set Historic Data
+    # logger.info("Set Historic Data")
+    # SAVED_INFO = list(reversed(SAVED_INFO))
+    # SAVED_INFO.append(JSONInfo)
+    # SAVED_INFO = fill_missing_keys(SAVED_INFO)
+    # savedInfo = list(reversed(SAVED_INFO))
+    # with open(savedInfoFile, "w") as outFile:
+    #     json.dump(savedInfo, outFile, indent=2)
 
     return
 
@@ -190,8 +221,9 @@ if __name__ == '__main__':
     with open(configFile) as inFile:
         config = json.load(inFile)
     MAX_CPU_TEMP_C = config["MAX_CPU_TEMP_C"]
-    MAX_AMBIENT_TEMP_C = config["MAX_AMBIENT_TEMP_C"]
-    MAX_AMBIENT_HUMIDITY = config["MAX_AMBIENT_HUMIDITY"]
+    TEMP_C_RANGE = config["TEMP_C_RANGE"]
+    HUMIDITY_RANGE = config["HUMIDITY_RANGE"]
+    PRESSURE_RANGE = config["PRESSURE_RANGE"]
     METRICS = config["METRICS"]
     METRICS_BAK = copy.deepcopy(config["METRICS"])
 

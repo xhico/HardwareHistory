@@ -1,7 +1,17 @@
 {
   "MAX_CPU_TEMP_C": 65,
-  "MAX_AMBIENT_TEMP_C": 30,
-  "MAX_AMBIENT_HUMIDITY": 90,
+  "TEMP_C_RANGE": [
+    15,
+    30
+  ],
+  "HUMIDITY_RANGE": [
+    50,
+    90
+  ],
+  "PRESSURE_RANGE": [
+    970,
+    1030
+  ],
   "METRICS": {
     "CPU": [
       "Percentage",
