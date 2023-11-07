@@ -68,7 +68,7 @@ def checkAlarms(JSONInfo):
     if "Ambient" in JSONInfo.keys():
         temp_c = JSONInfo["Ambient"]["TemperatureC"]
         humidity = JSONInfo["Ambient"]["Humidity"]
-        pressure = JSONInfo["Ambient"]["Pressure"]
+        pressure = "Not Available" if "Pressure" not in JSONInfo["Ambient"].keys() else JSONInfo["Ambient"]["Pressure"]
 
         subject = "AMBIENT WARNING"
         body = []
