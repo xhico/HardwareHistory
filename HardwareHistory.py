@@ -179,7 +179,7 @@ def main():
 
     # Get Hardware Info JSON
     logger.info("Get Hardware Info JSON")
-    response = requests.get("https://monitor." + hostname + ".xhico" + "/stats/getHWInfo", verify=False)
+    response = requests.get("https://monitor." + hostname + ".xhico" + "/stats/getHWInfo")
     if response.status_code != 200:
         logger.error("Failed to get hardware info JSON. Status code: %d", response.status_code)
         return
