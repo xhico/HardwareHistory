@@ -7,11 +7,10 @@ import os
 import socket
 import traceback
 import json
-from Misc import get911, sendEmail
 import requests
 import copy
-
 import urllib3
+from Misc import get911, sendEmail
 
 urllib3.disable_warnings()
 
