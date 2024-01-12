@@ -1,5 +1,7 @@
 {
   "MAX_CPU_TEMP_C": 65,
+  "MAX_CPU_USAGE": 80,
+  "MAX_RAM_USAGE": 80,
   "MAX_SDCARD_USAGE": 80,
   "TEMP_C_RANGE": [
     15,

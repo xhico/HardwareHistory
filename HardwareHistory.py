@@ -56,12 +56,26 @@ def checkAlarms(JSONInfo):
     None
     """
 
+    # Check CPU Usage
+    cpu_usage = JSONInfo["CPU"]["Percentage"]
+    if cpu_usage >= MAX_CPU_USAGE:
+        logger.warning("HIGH CPU USAGE")
+        logger.warning(f"CPU Usage: {cpu_usage} ºC")
+        sendEmail("HIGH CPU USAGE", f"CPU Usage: {cpu_usage} ºC")
+
     # Check Temperature
     temperature = JSONInfo["CPU"]["Temperature"]
     if temperature >= MAX_CPU_TEMP_C:
         logger.warning("OVERHEAT")
         logger.warning(f"CPU Temperature: {temperature} ºC")
         sendEmail("OVERHEAT", f"CPU Temperature: {temperature} ºC")
+
+    # Check RAM Usage
+    ram_usage = JSONInfo["Memory"]["Percentage"]
+    if ram_usage >= MAX_RAM_USAGE:
+        logger.warning("HIGH CPU USAGE")
+        logger.warning(f"RAM Usage: {ram_usage} ºC")
+        sendEmail("HIGH RAM USAGE", f"RAM Usage: {ram_usage} ºC")
 
     # Check Disk Usage
     sdcard_usage = JSONInfo["Disks"]["SDCard_Percentage"]
@@ -225,6 +239,8 @@ if __name__ == '__main__':
     with open(configFile) as inFile:
         config = json.load(inFile)
     MAX_CPU_TEMP_C = config["MAX_CPU_TEMP_C"]
+    MAX_CPU_USAGE = config["MAX_CPU_USAGE"]
+    MAX_RAM_USAGE = config["MAX_RAM_USAGE"]
     MAX_SDCARD_USAGE = config["MAX_SDCARD_USAGE"]
     TEMP_C_RANGE = config["TEMP_C_RANGE"]
     HUMIDITY_RANGE = config["HUMIDITY_RANGE"]
