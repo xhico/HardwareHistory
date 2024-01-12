@@ -1,5 +1,6 @@
 {
   "MAX_CPU_TEMP_C": 65,
+  "MAX_SDCARD_USAGE": 80,
   "TEMP_C_RANGE": [
     15,
     30

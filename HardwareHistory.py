@@ -60,8 +60,15 @@ def checkAlarms(JSONInfo):
     temperature = JSONInfo["CPU"]["Temperature"]
     if temperature >= MAX_CPU_TEMP_C:
         logger.warning("OVERHEAT")
-        logger.warning("CPU Temperature: " + str(temperature) + "ºC")
-        sendEmail("OVERHEAT", "CPU Temperature: " + str(temperature) + "ºC")
+        logger.warning(f"CPU Temperature: {temperature} ºC")
+        sendEmail("OVERHEAT", f"CPU Temperature: {temperature} ºC")
+
+    # Check Disk Usage
+    sdcard_usage = JSONInfo["Disks"]["SDCard_Percentage"]
+    if sdcard_usage >= MAX_SDCARD_USAGE:
+        logger.warning("HIGH SDCARD USAGE")
+        logger.warning(f"Sdcard Usage: {sdcard_usage} %")
+        sendEmail("HIGH SDCARD USAGE", f"Sdcard Usage: {sdcard_usage} %")
 
     # Check Ambient
     if "Ambient" in JSONInfo.keys():
@@ -72,30 +79,30 @@ def checkAlarms(JSONInfo):
         subject = "AMBIENT WARNING"
         body = []
         if temp_c <= TEMP_C_RANGE[0]:
-            msg = "ICE - Ambient Temperature (" + str(temp_c) + "ºC) bellow threshold (" + str(TEMP_C_RANGE[0]) + "ºC)"
+            msg = f"ICE - Ambient Temperature ({temp_c} ºC) bellow threshold ({TEMP_C_RANGE[0]} ºC)"
             logger.warning(msg)
             body.append(msg)
         if temp_c >= TEMP_C_RANGE[1]:
-            msg = "FIRE - Ambient Temperature (" + str(temp_c) + "ºC) above threshold (" + str(TEMP_C_RANGE[1]) + "ºC)"
+            msg = f"FIRE - Ambient Temperature ({temp_c} ºC) above threshold ({TEMP_C_RANGE[1]} ºC)"
             logger.warning(msg)
             body.append(msg)
 
         if humidity <= HUMIDITY_RANGE[0]:
-            msg = "DRY - Ambient Humidity (" + str(humidity) + "%) bellow threshold (" + str(HUMIDITY_RANGE[0]) + "%)"
+            msg = f"DRY - Ambient Humidity ({humidity} %) bellow threshold ({HUMIDITY_RANGE[0]} %)"
             logger.warning(msg)
             body.append(msg)
         if humidity >= HUMIDITY_RANGE[1]:
-            msg = "FLOOD - Ambient Humidity (" + str(humidity) + "%) above threshold (" + str(HUMIDITY_RANGE[1]) + "%)"
+            msg = f"FLOOD - Ambient Humidity ({humidity} %) above threshold ({HUMIDITY_RANGE[1]} %)"
             logger.warning(msg)
             body.append(msg)
 
         if pressure != "Not Available":
             if pressure <= PRESSURE_RANGE[0]:
-                msg = "LOW Pressure - (" + str(pressure) + "hPa) bellow threshold (" + str(PRESSURE_RANGE[0]) + "hPa)"
+                msg = f"LOW Pressure - ({pressure} hPa) bellow threshold ({PRESSURE_RANGE[0]} hPa)"
                 logger.warning(msg)
                 body.append(msg)
             if pressure >= PRESSURE_RANGE[1]:
-                msg = "HIGH Pressure (" + str(pressure) + "hPa) above threshold (" + str(PRESSURE_RANGE[1]) + "hPa)"
+                msg = f"HIGH Pressure ({pressure} hPa) above threshold ({PRESSURE_RANGE[1]} hPa)"
                 logger.warning(msg)
                 body.append(msg)
 
@@ -178,9 +185,9 @@ def main():
 
     # Get Hardware Info JSON
     logger.info("Get Hardware Info JSON")
-    response = requests.get("https://monitor." + hostname + ".xhico" + "/stats/getHWInfo")
+    response = requests.get(f"https://monitor.{hostname}.xhico/stats/getHWInfo")
     if response.status_code != 200:
-        logger.error("Failed to get hardware info JSON. Status code: %d", response.status_code)
+        logger.error(f"Failed to get hardware info JSON. Status code: {response.status_code}")
         return
     JSONInfo = response.json()
 
@@ -201,8 +208,6 @@ def main():
     with open(savedInfoFile, "w") as outFile:
         json.dump(savedInfo, outFile, indent=2)
 
-    return
-
 
 if __name__ == '__main__':
     # Define constants
@@ -220,6 +225,7 @@ if __name__ == '__main__':
     with open(configFile) as inFile:
         config = json.load(inFile)
     MAX_CPU_TEMP_C = config["MAX_CPU_TEMP_C"]
+    MAX_SDCARD_USAGE = config["MAX_SDCARD_USAGE"]
     TEMP_C_RANGE = config["TEMP_C_RANGE"]
     HUMIDITY_RANGE = config["HUMIDITY_RANGE"]
     PRESSURE_RANGE = config["PRESSURE_RANGE"]
