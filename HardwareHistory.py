@@ -60,8 +60,8 @@ def checkAlarms(JSONInfo):
     cpu_usage = JSONInfo["CPU"]["Percentage"]
     if cpu_usage >= MAX_CPU_USAGE:
         logger.warning("HIGH CPU USAGE")
-        logger.warning(f"CPU Usage: {cpu_usage} ºC")
-        sendEmail("HIGH CPU USAGE", f"CPU Usage: {cpu_usage} ºC")
+        logger.warning(f"CPU Usage: {cpu_usage} %")
+        sendEmail("HIGH CPU USAGE", f"CPU Usage: {cpu_usage} %")
 
     # Check Temperature
     temperature = JSONInfo["CPU"]["Temperature"]
@@ -74,8 +74,8 @@ def checkAlarms(JSONInfo):
     ram_usage = JSONInfo["Memory"]["Percentage"]
     if ram_usage >= MAX_RAM_USAGE:
         logger.warning("HIGH CPU USAGE")
-        logger.warning(f"RAM Usage: {ram_usage} ºC")
-        sendEmail("HIGH RAM USAGE", f"RAM Usage: {ram_usage} ºC")
+        logger.warning(f"RAM Usage: {ram_usage} %")
+        sendEmail("HIGH RAM USAGE", f"RAM Usage: {ram_usage} %")
 
     # Check Disk Usage
     sdcard_usage = JSONInfo["Disks"]["SDCard_Percentage"]
