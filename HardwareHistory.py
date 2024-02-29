@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/python3
 
+import copy
 import datetime
+import json
 import logging
 import os
 import socket
 import traceback
-import json
+
 import requests
-import copy
 import urllib3
-from Misc import get911, sendEmail
+from Misc import sendEmail
 
 urllib3.disable_warnings()
 
