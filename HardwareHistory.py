@@ -11,7 +11,7 @@ import traceback
 
 import requests
 import urllib3
-from Misc import sendEmail
+from Misc import sendEmail, get911
 
 urllib3.disable_warnings()
 
@@ -200,7 +200,7 @@ def main():
 
     # Get Hardware Info JSON
     logger.info("Get Hardware Info JSON")
-    response = requests.get(f"https://monitor.{hostname}.xhico/stats/getHWInfo")
+    response = requests.get(f"https://monitor.{hostname}.xhico/stats/getHWInfo", auth=(get911("APACHE_USER"), get911("APACHE_PASS")))
     if response.status_code != 200:
         logger.error(f"Failed to get hardware info JSON. Status code: {response.status_code}")
         return
