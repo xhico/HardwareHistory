@@ -11,7 +11,6 @@ import traceback
 
 import requests
 import urllib3
-
 from Misc import sendEmail, get911
 
 urllib3.disable_warnings()
@@ -236,29 +235,29 @@ if __name__ == '__main__':
     # Log the start of the script
     logger.info("----------------------------------------------------")
 
-    # Load configuration from JSON file
-    configFile = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
-    with open(configFile) as inFile:
-        config = json.load(inFile)
-    MAX_CPU_TEMP_C = config["MAX_CPU_TEMP_C"]
-    MAX_CPU_USAGE = config["MAX_CPU_USAGE"]
-    MAX_RAM_USAGE = config["MAX_RAM_USAGE"]
-    MAX_SDCARD_USAGE = config["MAX_SDCARD_USAGE"]
-    TEMP_C_RANGE = config["TEMP_C_RANGE"]
-    HUMIDITY_RANGE = config["HUMIDITY_RANGE"]
-    PRESSURE_RANGE = config["PRESSURE_RANGE"]
-    METRICS = config["METRICS"]
-    METRICS_BAK = copy.deepcopy(config["METRICS"])
-
-    # Load SAVED_INFO from JSON file
-    savedInfoFile = os.path.join(os.path.dirname(os.path.abspath(__file__)), "saved_info.json")
-    if not os.path.exists(savedInfoFile):
-        with open(savedInfoFile, "w") as outFile:
-            json.dump([], outFile, indent=2)
-    with open(savedInfoFile) as inFile:
-        SAVED_INFO = json.load(inFile)
-
     try:
+        # Load configuration from JSON file
+        configFile = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
+        with open(configFile) as inFile:
+            config = json.load(inFile)
+        MAX_CPU_TEMP_C = config["MAX_CPU_TEMP_C"]
+        MAX_CPU_USAGE = config["MAX_CPU_USAGE"]
+        MAX_RAM_USAGE = config["MAX_RAM_USAGE"]
+        MAX_SDCARD_USAGE = config["MAX_SDCARD_USAGE"]
+        TEMP_C_RANGE = config["TEMP_C_RANGE"]
+        HUMIDITY_RANGE = config["HUMIDITY_RANGE"]
+        PRESSURE_RANGE = config["PRESSURE_RANGE"]
+        METRICS = config["METRICS"]
+        METRICS_BAK = copy.deepcopy(config["METRICS"])
+
+        # Load SAVED_INFO from JSON file
+        savedInfoFile = os.path.join(os.path.dirname(os.path.abspath(__file__)), "saved_info.json")
+        if not os.path.exists(savedInfoFile):
+            with open(savedInfoFile, "w") as outFile:
+                json.dump([], outFile, indent=2)
+        with open(savedInfoFile) as inFile:
+            SAVED_INFO = json.load(inFile)
+
         # Call the main function
         main()
     except Exception as ex:
